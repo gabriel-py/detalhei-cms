@@ -22,26 +22,56 @@ class DepartamentoViewSet(ModelViewSet):
     serializer_class = DepartamentoSerializer
     queryset = Departamento.objects.all()
     pagination_class = None
+    
+    def get_queryset(self):
+        queryParams = self.request.GET.get('setor')
+        if queryParams is None:
+            return Departamento.objects.all()
+        return Departamento.objects.filter(setor__id=queryParams)
 
 class AreaViewSet(ModelViewSet):
     serializer_class = AreaSerializer
     queryset = Area.objects.all()
     pagination_class = None
     
+    def get_queryset(self):
+        queryParams = self.request.GET.get('departamento')
+        if queryParams is None:
+            return Area.objects.all()
+        return Area.objects.filter(departamento__id=queryParams)
+    
 class CategoriaViewSet(ModelViewSet):
     serializer_class = CategoriaSerializer
     queryset = Categoria.objects.all()
     pagination_class = None
+    
+    def get_queryset(self):
+        queryParams = self.request.GET.get('area')
+        if queryParams is None:
+            return Categoria.objects.all()
+        return Categoria.objects.filter(area__id=queryParams)
     
 class TopicoViewSet(ModelViewSet):
     serializer_class = TopicoSerializer
     queryset = Topico.objects.all()
     pagination_class = None
     
+    def get_queryset(self):
+        queryParams = self.request.GET.get('categoria')
+        if queryParams is None:
+            return Topico.objects.all()
+        return Topico.objects.filter(categoria__id=queryParams)
+    
 class ProdutoViewSet(ModelViewSet):
     serializer_class = ProdutoSerializer
     queryset = Produto.objects.all()
     pagination_class = None
+    
+    def get_queryset(self):
+        queryParams = self.request.GET.get('area')
+        if queryParams is None:
+            return Produto.objects.all()
+        return Produto.objects.filter(area__id=queryParams)
     
 class OfertaViewSet(ModelViewSet):
     serializer_class = OfertaSerializer
