@@ -9,7 +9,6 @@ from .utils import get_routes
 class Access(APIView):
     def get(self, request):
         user = self.request.user
-        breakpoint()
 
         return Response({
             "id": user.id,
