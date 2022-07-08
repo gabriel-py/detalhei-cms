@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from detalhei.models import Post, Produto, Avaliacao, NotaAvaliacao, Topico, Area, Categoria, \
@@ -6,6 +7,7 @@ from detalhei.models import Post, Produto, Avaliacao, NotaAvaliacao, Topico, Are
 import pandas as pd
 import numpy as np
 import json
+from detalhei.api.serializers import NotaAvaliacaoSerializer
 
 {
     "produto": 1,
@@ -17,6 +19,16 @@ import json
         {"topico": 10, "nota": 7.5},
     ]
 }
+
+@api_view(['POST'])
+def getAvaliacao(request):
+    body = json.loads(request.body)
+    produto = Produto.objects.get(id=body["produto"])
+    
+    notas = NotaAvaliacao.objects.filter(avaliacao__post__produto=produto).all()
+    serializer = NotaAvaliacaoSerializer(items, many=True)
+    
+    return JsonResponse({'success': True, 'items': serializer.data}, safe=False)
 
 @api_view(['POST'])
 def createAvaliacao(request):

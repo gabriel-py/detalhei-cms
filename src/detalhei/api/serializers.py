@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from detalhei.models import Categoria, Departamento, Area, Produto, Oferta, Loja,\
     Opiniao, Avaliacao, Descricao, Revisao, Comentario, ComentarioEngajamento, PostEngajamento,\
-        Seguidores, Setor, Topico
+        Seguidores, Setor, Topico, NotaAvaliacao
         
 class CategoriaSerializer(ModelSerializer):
     class Meta:
@@ -82,4 +82,9 @@ class SeguidoresSerializer(ModelSerializer):
 class SetorSerializer(ModelSerializer):
     class Meta:
         model = Setor
+        fields = '__all__'
+        
+class NotaAvaliacaoSerializer(ModelSerializer):
+    class Meta:
+        model = NotaAvaliacao
         fields = '__all__'
