@@ -140,3 +140,24 @@ class PostEngajamento(models.Model):
 class Seguidores(models.Model):
     seguidor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="usuario_que_segue")
     seguindo = models.ForeignKey(User, on_delete=models.CASCADE, related_name="usuario_que_eh_seguido")
+    
+class NormalizacaoBacklog(models.Model):
+    avaliacao = models.ForeignKey(Avaliacao, on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+class NormalizacaoRanking(models.Model):
+    avaliacao = models.ForeignKey(Avaliacao, on_delete=models.CASCADE, blank=True, null=True)
+    average_score = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    overall_score = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    average_score_normalizado = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    overall_score_normalizado = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    
+class Sumario(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    nota = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    
+class SumarioNormalizado(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    nota = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)

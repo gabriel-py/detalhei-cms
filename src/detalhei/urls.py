@@ -28,4 +28,5 @@ router.register(r'setor', SetorViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('create_avaliacao', createAvaliacao),
+    path('calcula_normalizacao', consultaBacklog),
 ]
