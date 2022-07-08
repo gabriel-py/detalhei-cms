@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from detalhei.models import Post, Produto, Avaliacao, NotaAvaliacao, Topico, Area, Categoria, \
-    NormalizacaoBacklog, Sumario, SumarioNormalizado
+    NormalizacaoBacklog, Sumario, SumarioNormalizado, NormalizacaoRanking
 import pandas as pd
 import numpy as np
 import json
@@ -15,7 +15,7 @@ def getAvaliacao(request):
     produto = Produto.objects.get(id=body["produto"])
     
     notas = NotaAvaliacao.objects.filter(avaliacao__post__produto=produto).all()
-    serializer = NotaAvaliacaoSerializer(items, many=True)
+    serializer = NotaAvaliacaoSerializer(notas, many=True)
     
     return JsonResponse({'success': True, 'items': serializer.data}, safe=False)
 
