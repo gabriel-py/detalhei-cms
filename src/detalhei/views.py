@@ -54,7 +54,7 @@ def getRanking(request):
     
     result = {}
     for produto in produtos:
-        ranking = NormalizacaoRanking.objects.filter(avaliacao__post__produto=produto).all()
+        ranking = NormalizacaoRanking.objects.get(avaliacao__post__produto=produto)
         result["produto"] = produto.nome
         result["overall_score_normalizado"] = ranking.overall_score_normalizado
 
