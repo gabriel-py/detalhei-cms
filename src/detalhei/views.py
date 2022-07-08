@@ -9,7 +9,7 @@ import numpy as np
 import json
 from detalhei.api.serializers import NotaAvaliacaoSerializer
 
-@api_view(['POST'])
+@api_view(['GET'])
 def getAvaliacao(request):
     body = json.loads(request.body)
     produto = Produto.objects.get(id=body["produto"])
