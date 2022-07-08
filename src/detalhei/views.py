@@ -9,7 +9,7 @@ import numpy as np
 import json
 from detalhei.api.serializers import NotaAvaliacaoSerializer
 
-@api_view(['GET'])
+@api_view(['POST'])
 def getAvaliacao(request):
     body = json.loads(request.body)
     produto = Produto.objects.get(id=body["produto"])
@@ -45,7 +45,7 @@ def createAvaliacao(request):
     )
     return JsonResponse({'success': True}, safe=False)
 
-@api_view(['GET'])
+@api_view(['POST'])
 def getRanking(request):
     body = json.loads(request.body)
     area = Area.objects.get(id=body["area"])
