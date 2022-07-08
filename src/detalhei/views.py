@@ -47,7 +47,6 @@ def createAvaliacao(request):
 @api_view(['GET'])
 def getRanking(request):
     area = Area.objects.get(id=request.GET.get("area"))
-    breakpoint()
     
     produtos = Produto.objects.filter(area=area).all()
     
@@ -55,7 +54,13 @@ def getRanking(request):
     for produto in produtos:
         ranking = NormalizacaoRanking.objects.filter(avaliacao__post__produto=produto).all()
         if not ranking:
+            result.append({
+                "produto": produto.nome,
+                "overall_score_normalizado": 0,
+                "categoria": []
+            })
             continue
+        
         ranking = ranking[0]
         dic = {}
         dic["produto"] = produto.nome
@@ -65,11 +70,15 @@ def getRanking(request):
         sumarios = SumarioNormalizado.objects.filter(produto=produto).all()
         for s in sumarios:
             notas.append({
-                "nome": s.categoria,
+                "nome": s.categoria.nome,
                 "nota": s.nota
             })
-        dic["categoria"] = notas
-        result.append(dic)
+            
+        result.append({
+            "produto": produto.nome,
+            "overall_score_normalizado": ranking.overall_score_normalizado,
+            "categoria": notas
+        })
             
     return JsonResponse(result, safe=False)
 
@@ -85,19 +94,16 @@ def calculoSumario(obj):
     sum_scores = 0
     i = 0
     for categoria in categorias:
-        
         topicos_da_categoria = Topico.objects.filter(categoria=categoria).all()
         if not topicos_da_categoria:
             continue
-        
         somatorio_notas_topicos = 0
         max_score = 0
         for topico in topicos_da_categoria:
             notaAvObj = NotaAvaliacao.objects.get(avaliacao=avaliacao, topico=topico)
-            somatorio_notas_topicos = somatorio_notas_topicos + notaAvObj.nota
+            somatorio_notas_topicos = somatorio_notas_topicos + (notaAvObj.nota)*(topico.peso)
             max_score = max_score + (topico.peso)*10
-        
-        print(max_score)
+            
         total_score = total_score + somatorio_notas_topicos
         total_max_score = total_max_score + max_score
         score = somatorio_notas_topicos/max_score * 100
@@ -110,7 +116,7 @@ def calculoSumario(obj):
             nota=score
         )
         objs_sumarios.append(objSum)
-        
+    
     NormalizacaoRanking.objects.create(
         avaliacao=avaliacao,
         average_score=sum_scores/i,
@@ -154,7 +160,7 @@ def updateProdutos(area):
         if r.average_score > max_average_score:
             max_average_score = r.average_score
         if r.overall_score > max_overall_score:
-            max_overall_score = r.overall_score
+            max_overall_score = r.overall_scores
     
     for r in ranking_to_update:
         r.average_score_normalizado = r.average_score / max_average_score * 100
