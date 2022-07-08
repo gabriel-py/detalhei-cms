@@ -30,4 +30,5 @@ urlpatterns = [
     path('create_avaliacao', createAvaliacao),
     path('calcula_normalizacao', consultaBacklog),
     path('get_avaliacao', getAvaliacao),
+    path('get_ranking', getRanking),
 ]

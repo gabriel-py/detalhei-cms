@@ -9,17 +9,6 @@ import numpy as np
 import json
 from detalhei.api.serializers import NotaAvaliacaoSerializer
 
-{
-    "produto": 1,
-    "notas": [
-        {"topico": 6, "nota": 7.5},
-        {"topico": 7, "nota": 7.5},
-        {"topico": 8, "nota": 7.5},
-        {"topico": 9, "nota": 7.5},
-        {"topico": 10, "nota": 7.5},
-    ]
-}
-
 @api_view(['POST'])
 def getAvaliacao(request):
     body = json.loads(request.body)
@@ -73,11 +62,12 @@ def getRanking(request):
         sumarios = SumarioNormalizado.objects.filter(produto=produto).all()
         for s in sumarios:
             notas.append({
-                s.categoria: s.nota
+                "nome": s.categoria,
+                "nota": s.nota
             })
         result["categoria"] = notas
             
-    return JsonResponse({'success': True}, safe=False)
+    return JsonResponse(result, safe=False)
 
 def calculoSumario(obj):
     avaliacao = obj.avaliacao
