@@ -85,15 +85,19 @@ def calculoSumario(obj):
     sum_scores = 0
     i = 0
     for categoria in categorias:
+        
         topicos_da_categoria = Topico.objects.filter(categoria=categoria).all()
+        if not topicos_da_categoria:
+            continue
         
         somatorio_notas_topicos = 0
         max_score = 0
         for topico in topicos_da_categoria:
-            notaAvObj = NotaAvaliacao.objects.filter(avaliacao=avaliacao, topico=topico).all()
+            notaAvObj = NotaAvaliacao.objects.get(avaliacao=avaliacao, topico=topico)
             somatorio_notas_topicos = somatorio_notas_topicos + notaAvObj.nota
-            max_score = max_score + (notaAvObj.topico.peso)*10
+            max_score = max_score + (topico.peso)*10
         
+        print(max_score)
         total_score = total_score + somatorio_notas_topicos
         total_max_score = total_max_score + max_score
         score = somatorio_notas_topicos/max_score * 100
@@ -152,18 +156,17 @@ def updateProdutos(area):
         if r.overall_score > max_overall_score:
             max_overall_score = r.overall_score
     
-    to_update = []        
     for r in ranking_to_update:
         r.average_score_normalizado = r.average_score / max_average_score * 100
         r.overall_score_normalizado = r.overall_score / max_overall_score * 100
-        to_update.append(r)
-    
-    NormalizacaoRanking.objects.bulk_update(to_update, batch_size=1000)
-
+        r.save()
+        
 @api_view(['GET'])
 def consultaBacklog(request):
     objs = NormalizacaoBacklog.objects.all()
     
     for obj in objs:
         calculoSumario(obj)
+        
+    return JsonResponse({"success": True}, safe=False)
 
