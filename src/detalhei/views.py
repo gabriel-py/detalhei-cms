@@ -167,6 +167,7 @@ def consultaBacklog(request):
     
     for obj in objs:
         calculoSumario(obj)
+        obj.delete()
         
     return JsonResponse({"success": True}, safe=False)
 
