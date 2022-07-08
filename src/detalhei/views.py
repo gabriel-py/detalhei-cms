@@ -9,15 +9,14 @@ import numpy as np
 import json
 from detalhei.api.serializers import NotaAvaliacaoSerializer
 
-@api_view(['POST'])
+@api_view(['GET'])
 def getAvaliacao(request):
-    body = json.loads(request.body)
-    produto = Produto.objects.get(id=body["produto"])
+    produto = Produto.objects.get(id=request.GET.get("produto"))
     
     notas = NotaAvaliacao.objects.filter(avaliacao__post__produto=produto).all()
     serializer = NotaAvaliacaoSerializer(notas, many=True)
     
-    return JsonResponse({'success': True, 'items': serializer.data}, safe=False)
+    return JsonResponse(serializer.data, safe=False)
 
 @api_view(['POST'])
 def createAvaliacao(request):
@@ -45,21 +44,22 @@ def createAvaliacao(request):
     )
     return JsonResponse({'success': True}, safe=False)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def getRanking(request):
     body = json.loads(request.body)
-    area = Area.objects.get(id=body["area"])
+    area = Area.objects.get(id=request.GET.get("area"))
     
     produtos = Produto.objects.filter(area=area).all()
     
-    result = {}
+    result = []
     for produto in produtos:
         ranking = NormalizacaoRanking.objects.filter(avaliacao__post__produto=produto).all()
         if not ranking:
             continue
         ranking = ranking[0]
-        result["produto"] = produto.nome
-        result["overall_score_normalizado"] = ranking.overall_score_normalizado
+        dic = {}
+        dic["produto"] = produto.nome
+        dic["overall_score_normalizado"] = ranking.overall_score_normalizado
 
         notas = []
         sumarios = SumarioNormalizado.objects.filter(produto=produto).all()
@@ -68,7 +68,8 @@ def getRanking(request):
                 "nome": s.categoria,
                 "nota": s.nota
             })
-        result["categoria"] = notas
+        dic["categoria"] = notas
+        result.append(dic)
             
     return JsonResponse(result, safe=False)
 
