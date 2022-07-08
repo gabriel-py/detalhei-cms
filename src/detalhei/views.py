@@ -45,7 +45,7 @@ def createAvaliacao(request):
     )
     return JsonResponse({'success': True}, safe=False)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def getRanking(request):
     body = json.loads(request.body)
     area = Area.objects.get(id=body["area"])
